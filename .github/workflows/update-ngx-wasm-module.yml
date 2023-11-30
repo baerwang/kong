@@ -25,8 +25,12 @@ jobs:
     - name: Detect current version of NGX_WASM_MODULE in .requirements
       id: check-kong
       run: |
-        SHA=$(sed -nre 's/^NGX_WASM_MODULE=([^ ]+) .*/\1/p' < .requirements)
+        SHA=$(sed -nre 's/^NGX_WASM_MODULE=([^ ]+).*/\1/p' < .requirements)
         echo "sha=$SHA" | tee -a "$GITHUB_OUTPUT"
+        if [[ -z ${SHA:-} ]]; then
+          echo "fatal: failed to parse ngx_wasm_module sha from .requirements file"
+          exit 1
+        fi
 
     - name: Check Kong/ngx_wasm_module HEAD
       id: check-repo
@@ -35,6 +39,10 @@ jobs:
       run: |
         SHA=$(gh api repos/Kong/ngx_wasm_module/commits/main --jq '.sha')
         echo "sha=$SHA" | tee -a "$GITHUB_OUTPUT"
+        if [[ -z ${SHA:-} ]]; then
+          echo "fatal: failed to fetch sha from Kong/ngx_wasm_module repo"
+          exit 1
+        fi
 
     - name: Update .requirements and create a pull request
       if: steps.check-kong.outputs.sha != steps.check-repo.outputs.sha

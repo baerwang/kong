@@ -132,9 +132,11 @@ jobs:
             < commits.json
 
           printf '\n\n'
-          printf '**IMPORTANT: Remember to scan this commit log for updates '
-          printf 'to Wasmtime/V8/Wasmer and update `.requirements` manually '
-          printf 'as needed**\n'
+          printf '## TODO'
+          printf '\n\n'
+          printf '- [ ] scan this commit log for updates to Wasmtime/V8/Wasmer '
+          printf        'and update `.requirements` as needed'
+          printf '\n'
         } > body.md
 
         gh pr create \

@@ -55,13 +55,12 @@ jobs:
         gh auth status
         gh auth setup-git
 
-        # masquerade as dependabot for the purposes of this commit/PR
-        git config --global user.email \
-          "49699333+ngx-wasm-module-updates[bot]@users.noreply.github.com"
-        git config --global user.name "ngx-wasm-module-updates[bot]"
+        # masquerade as team-gateway-bot for the purposes of this commit/PR
+        git config --global user.email "team-gateway@konghq.com"
+        git config --global user.name "team-gateway-bot"
 
         readonly BRANCH=chore/deps-bump-ngx-wasm-module
-        if gh api repos/Kong/kong/branches/"$BRANCH"; then
+        if gh api repos/Kong/kong/branches/"$BRANCH" >/dev/null; then
           echo "branch ($BRANCH) already exists, exiting"
           exit  1
         fi

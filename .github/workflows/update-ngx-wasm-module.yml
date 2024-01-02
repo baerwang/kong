@@ -134,7 +134,7 @@ jobs:
           printf '\n\n'
           printf '## TODO'
           printf '\n\n'
-          printf '- [ ] scan this commit log for updates to Wasmtime/V8/Wasmer '
+          printf -- '- [ ] scan this commit log for updates to Wasmtime/V8/Wasmer '
           printf        'and update `.requirements` as needed'
           printf '\n'
         } > body.md

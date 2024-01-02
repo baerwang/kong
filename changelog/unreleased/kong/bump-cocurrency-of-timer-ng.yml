@@ -1,0 +1,3 @@
+message: Bumped the concurrency limitation of timer.
+type: performance
+scope: Performance

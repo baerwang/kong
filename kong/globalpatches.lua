@@ -96,7 +96,10 @@ return function(options)
       _timerng:start()
 
     else
-      _timerng = require("resty.timerng").new()
+      _timerng = require("resty.timerng").new({
+        min_threads = 1024,
+        max_threads = 2048,
+      })
     end
 
     _G.timerng = _timerng

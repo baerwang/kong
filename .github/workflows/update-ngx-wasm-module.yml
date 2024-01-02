@@ -52,12 +52,13 @@ jobs:
         TO: ${{ steps.check-repo.outputs.sha }}
       run: |
         set -x
-        gh auth status
-        gh auth setup-git
 
         # masquerade as team-gateway-bot for the purposes of this commit/PR
         git config --global user.email "team-gateway@konghq.com"
         git config --global user.name "team-gateway-bot"
+
+        gh auth status
+        gh auth setup-git
 
         readonly BRANCH=chore/deps-bump-ngx-wasm-module
         if gh api repos/Kong/kong/branches/"$BRANCH" >/dev/null; then

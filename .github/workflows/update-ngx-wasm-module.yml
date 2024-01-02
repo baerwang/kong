@@ -57,8 +57,8 @@ jobs:
 
         # masquerade as dependabot for the purposes of this commit/PR
         git config --global user.email \
-          "49699333+dependabot[bot]@users.noreply.github.com"
-        git config --global user.name "dependabot[bot]"
+          "49699333+ngx-wasm-module-updates[bot]@users.noreply.github.com"
+        git config --global user.name "ngx-wasm-module-updates[bot]"
 
         readonly BRANCH=chore/deps-bump-ngx-wasm-module
         if gh api repos/Kong/kong/branches/"$BRANCH"; then

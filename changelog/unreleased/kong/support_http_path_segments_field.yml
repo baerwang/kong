@@ -1,4 +1,5 @@
 message: |
-  support `http.path.segments.*` field in expressions router flavor.
+  support `http.path.segments.*` and `http.path.segments.rev.*` field
+  in expressions router flavor.
 type: feature
 scope: Core

@@ -21,6 +21,10 @@ local HTTP_HEADERS_PREFIX = "http.headers."
 local HTTP_QUERIES_PREFIX = "http.queries."
 
 
+local HTTP_SEGMENTS_PREFIX = "http.path.segments."
+local HTTP_SEGMENTS_PREFIX_LEN = #HTTP_SEGMENTS_PREFIX
+
+
 local FIELDS_FUNCS = {
     -- http.*
 
@@ -167,6 +171,7 @@ end -- is_http
 if is_http then
 
   local fmt = string.format
+  local ngx_re_split = require("ngx.re").split
 
   -- func => get_headers or get_uri_args
   -- name => "headers" or "queries"
@@ -209,6 +214,21 @@ if is_http then
 
         return params.queries[field:sub(PREFIX_LEN + 1)]
       end
+
+    elseif field:sub(1, HTTP_SEGMENTS_PREFIX_LEN) == HTTP_SEGMENTS_PREFIX then
+      return function(params)
+        if not params.segments then
+          params.segments = ngx_re_split(params.uri, "/", "jo")
+        end
+
+        -- "/a/b/c"
+        -- 1="", 2="a", 3="b"
+        -- http.path.segments.0 => params.segments[2]
+
+        local pos = tonumber(field:sub(HTTP_SEGMENTS_PREFIX_LEN + 1)) + 2
+        return params.segments[pos]
+      end
+
     end
 
     -- others return nil

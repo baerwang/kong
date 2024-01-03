@@ -191,7 +191,6 @@ jobs:
           docker logs kong_redis
 
     - name: Run OpenTelemetry Collector
-      if: ${{ matrix.suite == 'plugins' }}
       run: |
           mkdir -p ${{ github.workspace }}/tmp/otel
           touch ${{ github.workspace }}/tmp/otel/file_exporter.json

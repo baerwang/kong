@@ -551,6 +551,8 @@ local CONF_PARSERS = {
 
   request_debug = { typ = "boolean" },
   request_debug_token = { typ = "string" },
+
+  konnect_mode = { typ = "boolean" },
 }
 
 

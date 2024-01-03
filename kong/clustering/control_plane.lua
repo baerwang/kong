@@ -357,30 +357,31 @@ function _M:handle_cp_websocket(cert)
       if typ == "close" then
         ngx_log(ngx_DEBUG, _log_prefix, "received close frame from data plane", log_suffix)
         return
-      end
 
-      if not data then
-        return nil, "did not receive ping frame from data plane"
+      elseif typ == "ping" then
+        ngx_log(ngx_DEBUG, _log_prefix, "received ping frame from data plane", log_suffix)
 
-      elseif #data ~= 32 then
-        return nil, "received a ping frame from the data plane with an invalid"
-                 .. " hash: '" .. tostring(data) .. "'"
-      end
+        if not data then
+          return nil, "did not receive ping frame from data plane"
+
+        elseif #data ~= 32 then
+          return nil, "received a ping frame from the data plane with an invalid"
+                   .. " hash: '" .. tostring(data) .. "'"
+        end
+
+        config_hash = data
+        last_seen = ngx_time()
+        update_sync_status()
+
+        -- queue PONG to avoid races
+        table_insert(queue, PONG_TYPE)
+        queue.post()
 
       -- dps only send pings
-      if typ ~= "ping" then
-        return nil, "invalid websocket frame received from data plane: " .. typ
+      else
+        ngx_log(ngx_DEBUG, _log_prefix, data, log_suffix)
+        return nil, "unexpected websocket frame received from data plane: " .. typ
       end
-
-      ngx_log(ngx_DEBUG, _log_prefix, "received ping frame from data plane", log_suffix)
-
-      config_hash = data
-      last_seen = ngx_time()
-      update_sync_status()
-
-      -- queue PONG to avoid races
-      table_insert(queue, PONG_TYPE)
-      queue.post()
 
       ::continue::
     end

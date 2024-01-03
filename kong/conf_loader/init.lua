@@ -857,6 +857,12 @@ local function load(path, custom_conf, opts)
   -- will work from here onwards.
   assert(require("kong.tools.dns")(conf))
 
+  -- konnect_mode is used in testing but is not (currently) intended to be
+  -- enabled by end users
+  if conf.konnect_mode then
+    log.warn("'konnect_mode' is not currently supported in Kong OSS")
+  end
+
   return setmetatable(conf, nil) -- remove Map mt
 end
 

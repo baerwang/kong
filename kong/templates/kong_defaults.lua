@@ -204,4 +204,6 @@ wasm_dynamic_module = NONE
 
 request_debug = on
 request_debug_token =
+
+konnect_mode = off
 ]]

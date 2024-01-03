@@ -5250,5 +5250,59 @@ do
       assert.same(ctx.route_match_cached, "neg")
     end)
   end)
+
+  describe("Router (flavor = " .. flavor .. ") [http]", function()
+    reload_router(flavor)
+
+    local use_case, router
+
+    lazy_setup(function()
+      use_case = {
+        {
+          service = service,
+          route   = {
+            id = "e8fb37f1-102d-461e-9c51-6608a6bb8101",
+            expression = [[http.path.segments.0 == "foo" && http.path.segments.1 == "bar"]],
+            priority = 100,
+          },
+        },
+        {
+          service = service,
+          route   = {
+            id = "e8fb37f1-102d-461e-9c51-6608a6bb8102",
+            expression = [[http.path.segments.0 == "foo" && http.path.segments.2 ^= "baz"]],
+            priority = 200,
+          },
+        },
+        {
+          service = service,
+          route   = {
+            id = "e8fb37f1-102d-461e-9c51-6608a6bb8103",
+            expression = [[http.path.segments.0 == "foo" && http.path.segments.3 ~ r#"\d+"#]],
+            priority = 300,
+          },
+        },
+      }
+    end)
+
+    it("select() should match http.segments.*", function()
+      router = assert(new_router(use_case))
+
+      local match_t = router:select("GET", "/foo/bar")
+      assert.truthy(match_t)
+      assert.same(use_case[1].route, match_t.route)
+
+      local match_t = router:select("GET", "/foo/bar/bazxxx")
+      assert.truthy(match_t)
+      assert.same(use_case[2].route, match_t.route)
+
+      local match_t = router:select("GET", "/foo/bar/baz/12345")
+      assert.truthy(match_t)
+      assert.same(use_case[3].route, match_t.route)
+
+      local match_t = router:select("GET", "/foo/xxx")
+      assert.falsy(match_t)
+    end)
+  end)
 end   -- local flavor = "expressions"
 

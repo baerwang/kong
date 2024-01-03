@@ -62,7 +62,10 @@ do
     ["String"] = {"net.protocol", "tls.sni",
                   "http.method", "http.host",
                   "http.path",
+
                   "http.path.segments.*",
+                  "http.path.segments.rev.*",
+
                   "http.headers.*",
                   "http.queries.*",
                  },

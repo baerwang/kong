@@ -172,6 +172,8 @@ if is_http then
 
   local HTTP_SEGMENTS_PREFIX = "http.path.segments."
   local HTTP_SEGMENTS_PREFIX_LEN = #HTTP_SEGMENTS_PREFIX
+  local HTTP_SEGMENTS_REV_TAG = "rev."
+  local HTTP_SEGMENTS_REV_TAG_LEN = #HTTP_SEGMENTS_REV_TAG
 
 
   -- func => get_headers or get_uri_args
@@ -222,10 +224,32 @@ if is_http then
           params.segments = ngx_re_split(params.uri, "/", "jo")
         end
 
-        -- "/a/b/c" => 1="", 2="a", 3="b"
-        -- http.path.segments.0 => params.segments[2]
+        -- "/a/b/c" => 1="", 2="a", 3="b", 4="c"
+        -- http.path.segments.0 => params.segments[2 + 0]
+        -- http.path.segments.rev.0 => params.segments[4 - 0]
 
-        local pos = tonumber(field:sub(HTTP_SEGMENTS_PREFIX_LEN + 1)) + 2
+        local str = field:sub(HTTP_SEGMENTS_PREFIX_LEN + 1)
+        local is_rev = str:sub(1, HTTP_SEGMENTS_REV_TAG_LEN) == HTTP_SEGMENTS_REV_TAG
+        local pos
+
+        if is_rev then
+          pos = tonumber(str:sub(HTTP_SEGMENTS_REV_TAG_LEN + 1))
+
+        else
+          pos = tonumber(str)
+        end
+
+        if not pos then
+          return nil
+        end
+
+        if is_rev then
+          pos = #params.segments - pos
+
+        else
+          pos = 2 + pos
+        end
+
         return params.segments[pos]
       end
 

@@ -5282,6 +5282,14 @@ do
             priority = 300,
           },
         },
+        {
+          service = service,
+          route   = {
+            id = "e8fb37f1-102d-461e-9c51-6608a6bb8104",
+            expression = [[http.path.segments.rev.0 == "yyy" && http.path.segments.rev.1 == "xxx"]],
+            priority = 100,
+          },
+        },
       }
     end)
 
@@ -5301,6 +5309,21 @@ do
       assert.same(use_case[3].route, match_t.route)
 
       local match_t = router:select("GET", "/foo/xxx")
+      assert.falsy(match_t)
+    end)
+
+    it("select() should match http.segments.rev.*", function()
+      router = assert(new_router(use_case))
+
+      local match_t = router:select("GET", "/xxx/yyy")
+      assert.truthy(match_t)
+      assert.same(use_case[4].route, match_t.route)
+
+      local match_t = router:select("GET", "/foo/xxx/yyy")
+      assert.truthy(match_t)
+      assert.same(use_case[4].route, match_t.route)
+
+      local match_t = router:select("GET", "foo/xxx/yyy/bar")
       assert.falsy(match_t)
     end)
   end)

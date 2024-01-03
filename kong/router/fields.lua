@@ -21,10 +21,6 @@ local HTTP_HEADERS_PREFIX = "http.headers."
 local HTTP_QUERIES_PREFIX = "http.queries."
 
 
-local HTTP_SEGMENTS_PREFIX = "http.path.segments."
-local HTTP_SEGMENTS_PREFIX_LEN = #HTTP_SEGMENTS_PREFIX
-
-
 local FIELDS_FUNCS = {
     -- http.*
 
@@ -173,6 +169,11 @@ if is_http then
   local fmt = string.format
   local ngx_re_split = require("ngx.re").split
 
+
+  local HTTP_SEGMENTS_PREFIX = "http.path.segments."
+  local HTTP_SEGMENTS_PREFIX_LEN = #HTTP_SEGMENTS_PREFIX
+
+
   -- func => get_headers or get_uri_args
   -- name => "headers" or "queries"
   -- max_config_option => "lua_max_req_headers" or "lua_max_uri_args"
@@ -221,8 +222,7 @@ if is_http then
           params.segments = ngx_re_split(params.uri, "/", "jo")
         end
 
-        -- "/a/b/c"
-        -- 1="", 2="a", 3="b"
+        -- "/a/b/c" => 1="", 2="a", 3="b"
         -- http.path.segments.0 => params.segments[2]
 
         local pos = tonumber(field:sub(HTTP_SEGMENTS_PREFIX_LEN + 1)) + 2

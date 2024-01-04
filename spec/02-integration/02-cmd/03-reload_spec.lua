@@ -669,8 +669,7 @@ describe("key-auth plugin invalidation on dbless reload #off", function()
       local body = assert.res_status(200, res)
       local json = cjson.decode(body)
       admin_client:close()
-      assert.same(1, #json.data)
-      return "my-new-key" == json.data[1].key
+      return #json.data == 1 and "my-new-key" == json.data[1].key
     end, 5)
 
     helpers.wait_until(function()
